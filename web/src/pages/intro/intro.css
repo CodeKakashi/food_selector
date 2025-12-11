@@ -1,0 +1,27 @@
+.intro-page {
+    text-align: center;
+    padding: 50px;
+    background-color: #f8f8f8;
+  }
+  
+  .intro-page h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .intro-page p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+  
+  .get-started-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
