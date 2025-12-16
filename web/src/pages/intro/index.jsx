@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../intro/intro.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Button, Flex } from 'antd';
 
 const IntroPage = () => {
   const [introContent, setIntroContent] = useState({});
@@ -27,6 +28,8 @@ const IntroPage = () => {
       <h1>{introContent.title}</h1>
       <p>{introContent.description}</p>
       <p>{introContent.subContent}</p>
+      <Button type="primary">Primary Button</Button>
+
       <Link to="/dashboard">
         <button className="get-started-button">Get Started</button>
       </Link>

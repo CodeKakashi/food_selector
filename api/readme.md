@@ -41,7 +41,7 @@ python -m pip install --upgrade pip
 ```
 cd <ROOT_PATH>/api
 python3 -m venv venv
-. venv.sh
+source venv/bin/activate
 pip3 install -r requirements.txt
 python -m pip install --upgrade pip
 ```

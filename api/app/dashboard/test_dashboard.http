@@ -1,0 +1,15 @@
+@hostUrl = http://127.0.0.1:5000
+
+###
+POST {{hostUrl}}/api/dashboard
+Content-Type: application/json
+
+{
+  "ingredients": ["milk", "sugar"],
+  "name": "lassi",
+  "diet": "vegetarian",
+  "prep_time": 30,
+  "cook_time": 20,
+  "course": "dessert",
+  "state": "Punjab"
+}

@@ -1,52 +1,62 @@
-import json
+import os
+from flask import request
 from flask_restful import Resource
 import pandas as pd
 
-from api.app.dashboard.functions import (
-    detect_foreign_in_df,
-    export_to_excel,
-    filter_recipes,
-    show_all_exact_duplicates,
-)
+from .functions import filter_recipes, show_all_exact_duplicates
+
 
 class Dashboard(Resource):
-    def get(self):
-        foodData = pd.read_csv("main.csv")
-        foodData.head()
+    def post(self):
+        data = request.get_json(force=True)
+    
 
-        foodData.info()
+        if "ingredients" not in data or not isinstance(data["ingredients"], list):
+            return {
+                "status": 0,
+                "class": "error",
+                "message": "ingredients (list) is mandatory",
+            }, 400
 
-        # checked the closed matches manually and found no false positives
+        ingredients = data["ingredients"]
 
-        print("EXACT DUPLICATE ROWS:")
-        print(show_all_exact_duplicates("name", foodData))
+        # ---------------------------
+        # Optional filters
+        # ---------------------------
+        name = data.get("name")
+        diet = data.get("diet")
+        prep_time = data.get("prep_time")
+        cook_time = data.get("cook_time")
+        course = data.get("course")
+        state = data.get("state")
 
-        # Apply detection
-        processed_df = detect_foreign_in_df(foodData)
+        # ---------------------------
+        # Load dataset
+        # ---------------------------
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        CSV_PATH = os.path.join(BASE_DIR, "..", "..", "main.csv")
+        CSV_PATH = os.path.abspath(CSV_PATH)
+        foodData = pd.read_csv(CSV_PATH)
 
-        # Export to Excel
-        export_to_excel(processed_df, "foreign_ingredients_check.xlsx")
+        # # ---------------------------
+        # # Ingredient filtering (fuzzy)
+        # # ---------------------------
+        filtered_df = filter_recipes(
+            foodData,
+            ingredients_list=ingredients,
+            name=name,
+        )
 
-        ingredients = ["mil", "sug"]
-
-        result, suggestions = filter_recipes(foodData, ingredients_list=ingredients)
-
-        print("Filtered Recipes:")
-        print(result[["name", "ingredients"]])
-
-        print("\nSuggested Ingredients (cleaned):")
-        print(suggestions)
-
-        filtered_df, suggestions = filter_recipes(foodData, ingredients_list=["milk"])
-
-        output_json = json.dumps({
+        # ---------------------------
+        # Prepare response
+        # ---------------------------
+        payload = {
             "filtered_recipes": filtered_df.to_dict(orient="records"),
-            "ingredient_suggestions": suggestions
-        }, indent=4)
+        }
 
         return {
             "status": 1,
             "class": "success",
-            "message": "Dashboard data successfully retrieved",
-            "payload": output_json,
-        }
+            "message": "Recipes filtered successfully",
+            "payload": payload,
+        }, 200
