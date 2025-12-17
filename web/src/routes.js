@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import NotFound from "./components/notFound";
 import IntroPage from "./pages/intro";
-import Dashboard from "./pages/dashboard";
+import DashboardGuard from "./pages/dashboard";
 
 const router = createBrowserRouter([
   {
@@ -10,7 +10,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: <DashboardGuard />,
   },
   //   Add your routes here
   {
