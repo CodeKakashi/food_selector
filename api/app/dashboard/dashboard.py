@@ -5,7 +5,6 @@ import pandas as pd
 
 from .functions import filter_recipes, show_all_exact_duplicates
 
-
 class Dashboard(Resource):
     def post(self):
         data = request.get_json(force=True)
@@ -45,6 +44,11 @@ class Dashboard(Resource):
             foodData,
             ingredients_list=ingredients,
             name=name,
+            diet=diet,
+            prep_time=prep_time,
+            cook_time=cook_time,
+            course=course,
+            state=state
         )
 
         # ---------------------------

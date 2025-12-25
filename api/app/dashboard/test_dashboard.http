@@ -7,9 +7,14 @@ Content-Type: application/json
 {
   "ingredients": ["milk", "sugar"],
   "name": "lassi",
-  "diet": "vegetarian",
   "prep_time": 30,
   "cook_time": 20,
+  "diet": "vegetarian",
   "course": "dessert",
   "state": "Punjab"
 }
+
+###
+GET {{hostUrl}}/api/ClassificationExporter
+Content-Type: application/json
+##
