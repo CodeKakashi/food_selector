@@ -11,47 +11,46 @@ import {
   Tooltip,
   Pagination,
   Form,
-  Row, Col, Alert, Image
+  Row,
+  Col,
+  Alert,
+  Image,
 } from "antd";
-import { YoutubeOutlined } from "@ant-design/icons";
+import { YoutubeOutlined, HomeOutlined } from "@ant-design/icons";
+import { useLocation, useNavigate } from "react-router-dom";
+import CustomBackTop from "../../components/customTop";
 import DishImage from "./dishImage";
 import RecipeFilters from "./RecipeFilters";
-import { HomeOutlined } from "@ant-design/icons";
-import { useLocation, useNavigate } from "react-router-dom";
 import resultIcon from "../../assets/result.svg";
-
 
 const { Text, Title, Link } = Typography;
 
 const RecipeListPage = ({ data = [] }) => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-
   const location = useLocation();
 
-  // ✅ read ingredients passed from IntroPage navigate state
-  // navigate("/dashboard", { state: { filtered_recipes, ingredients: ingredientsArray } })
+  // ✅ read recipes passed from IntroPage navigate state
   const recipesFromState = location?.state?.filtered_recipes || [];
+
+  // ✅ final dataset source
   const finalData = recipesFromState.length > 0 ? recipesFromState : data;
 
   const selectedIngredients =
     location?.state?.ingredients ||
     JSON.parse(localStorage.getItem("selectedIngredients") || "[]");
 
-
   // pagination
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
 
-  const normalize = (v) => String(v || "").trim().toLowerCase();
+  const normalize = (v) => String(v ?? "").trim().toLowerCase();
 
   // watch filters
   const rawFilters = Form.useWatch([], form);
-
   const filters = useMemo(() => rawFilters || {}, [rawFilters]);
 
-
-  // local filtering
+  // ✅ local filtering (IMPORTANT FIX: filter finalData, not data)
   const filteredData = useMemo(() => {
     const nameQ = normalize(filters.name);
     const dietQ = normalize(filters.diet);
@@ -61,7 +60,7 @@ const RecipeListPage = ({ data = [] }) => {
     const prepMax = filters.prep_time;
     const cookMax = filters.cook_time;
 
-    return data.filter((item) => {
+    return finalData.filter((item) => {
       const itemName = normalize(item.name);
       const itemDiet = normalize(item.diet);
       const itemCourse = normalize(item.course);
@@ -145,22 +144,23 @@ const RecipeListPage = ({ data = [] }) => {
           margin: "12px 16px 0 16px",
           borderRadius: 12,
         }}
-        closable= {true}
+        closable={true}
       />
 
-      {/* TITLE */}
-       <Flex justify="center">
-            <Image
-              src={resultIcon}
-              alt="recipe"
-              preview={false}
-              style={{
-                width: "100%",
-                maxWidth: 500,
-                height: "auto",
-              }}
-            />
-          </Flex>
+      {/* TITLE IMAGE */}
+      <Flex justify="center">
+        <Image
+          src={resultIcon}
+          alt="recipe"
+          preview={false}
+          style={{
+            width: "100%",
+            maxWidth: 500,
+            height: "auto",
+          }}
+        />
+      </Flex>
+
       <Row
         align="middle"
         justify="space-between"
@@ -173,28 +173,29 @@ const RecipeListPage = ({ data = [] }) => {
         </Col>
 
         <Col>
-          <Button
-            icon={<HomeOutlined />}
-            onClick={() => navigate("/")}
-            type="default"
-          >
+          <Button icon={<HomeOutlined />} onClick={() => navigate("/")} type="default">
             Home
           </Button>
         </Col>
       </Row>
 
-      {/* ✅ SEPARATE FILTER COMPONENT (STICKY) */}
-      <RecipeFilters form={form} data={finalData} total={filteredData.length} onReset={onResetFilters} sticky />
+      {/* FILTERS */}
+      <RecipeFilters
+        form={form}
+        data={finalData}
+        total={filteredData.length}
+        onReset={onResetFilters}
+        sticky
+      />
 
-
-      {/* LIST AREA */}
+      {/* LIST */}
       <div style={{ padding: 16 }}>
         <List
           itemLayout="vertical"
           size="large"
           dataSource={pagedData}
           renderItem={(item) => (
-            <List.Item key={item._id}>
+            <List.Item key={item._id || item.name}>
               <Card bodyStyle={{ padding: 20 }}>
                 <Flex gap={16} align="flex-start" wrap>
                   <DishImage name={item.name} course={item.course} />
@@ -229,10 +230,10 @@ const RecipeListPage = ({ data = [] }) => {
                       </Flex>
 
                       <Space wrap size="small">
-                        <Tag color="blue">{item.course}</Tag>
-                        <Tag color="purple">{item.state}</Tag>
-                        <Tag>Prep: {item.prep_time} min</Tag>
-                        <Tag>Cook: {item.cook_time} min</Tag>
+                        <Tag color="blue">{item.course || "Unknown course"}</Tag>
+                        <Tag color="purple">{item.state || "Unknown state"}</Tag>
+                        <Tag>Prep: {item.prep_time ?? "?"} min</Tag>
+                        <Tag>Cook: {item.cook_time ?? "?"} min</Tag>
                       </Space>
 
                       <Flex align="center" gap={8} wrap>
@@ -243,7 +244,7 @@ const RecipeListPage = ({ data = [] }) => {
 
                       <Space wrap size="small">
                         {(() => {
-                          const allIngredients = (item.ingredients || "")
+                          const allIngredients = String(item.ingredients || "")
                             .split(",")
                             .map((s) => s.trim())
                             .filter(Boolean);
@@ -257,9 +258,11 @@ const RecipeListPage = ({ data = [] }) => {
                           return allIngredients.map((ing, idx) => {
                             const isMissing = missingSet.has(ing.toLowerCase());
                             return (
-                              <Tag key={idx} color={isMissing ? "volcano" : "green"}>
+                              <Tag key={`${ing}-${idx}`} color={isMissing ? "volcano" : "green"}>
                                 <Link
-                                  href={`https://www.google.com/search?q=what+is+${encodeURIComponent(ing)}`}
+                                  href={`https://www.google.com/search?q=what+is+${encodeURIComponent(
+                                    ing
+                                  )}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   style={{ color: "inherit" }}
@@ -316,6 +319,10 @@ const RecipeListPage = ({ data = [] }) => {
           </div>
         )}
       </div>
+      <CustomBackTop
+
+      />
+
     </div>
   );
 };

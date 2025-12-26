@@ -2,14 +2,18 @@ import os
 from flask import request
 from flask_restful import Resource
 import pandas as pd
+from app.db import get_collection
 
 from .functions import filter_recipes, show_all_exact_duplicates
+
 
 class Dashboard(Resource):
     def post(self):
         data = request.get_json(force=True)
-    
 
+        # ---------------------------
+        # Validate input
+        # ---------------------------
         if "ingredients" not in data or not isinstance(data["ingredients"], list):
             return {
                 "status": 0,
@@ -30,18 +34,27 @@ class Dashboard(Resource):
         state = data.get("state")
 
         # ---------------------------
-        # Load dataset
+        # Fetch data from MongoDB
         # ---------------------------
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        CSV_PATH = os.path.join(BASE_DIR, "..", "..", "main.csv")
-        CSV_PATH = os.path.abspath(CSV_PATH)
-        foodData = pd.read_csv(CSV_PATH)
+        food_collection = get_collection("recipes", "foodInfo")
 
-        # # ---------------------------
-        # # Ingredient filtering (fuzzy)
-        # # ---------------------------
+        # exclude Mongo internal _id to avoid pandas issues
+        mongo_cursor = food_collection.find({}, {"_id": 0})
+
+        food_df = pd.DataFrame(list(mongo_cursor))
+
+        if food_df.empty:
+            return {
+                "status": 0,
+                "class": "error",
+                "message": "No food data available in database",
+            }, 404
+
+        # ---------------------------
+        # Ingredient filtering
+        # ---------------------------
         filtered_df = filter_recipes(
-            foodData,
+            food_df,
             ingredients_list=ingredients,
             name=name,
             diet=diet,
