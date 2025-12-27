@@ -114,22 +114,20 @@ const IntroPage = () => {
   };
 
   return (
-    <div
-      className="intro-page"
+    <Card
       style={{
-        minHeight: "100vh",
+        minHeight: "50vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 16,
       }}
     >
+
       <Card
         style={{
           width: "min(720px, 96vw)",
           borderRadius: 16,
         }}
-        bodyStyle={{ padding: 24 }}
       >
         <Space direction="vertical" size={10} style={{ width: "100%" }}>
           <Flex justify="center">
@@ -258,7 +256,8 @@ const IntroPage = () => {
           </Form>
         </Space>
       </Card>
-    </div>
+    </Card>
+
   );
 };
 
