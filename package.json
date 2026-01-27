@@ -1,0 +1,10 @@
+{
+  "name": "food-selector-root",
+  "private": true,
+  "scripts": {
+    "postinstall": "yarn --cwd web install",
+    "build": "yarn --cwd web build",
+    "start": "yarn --cwd web start",
+    "test": "yarn --cwd web test"
+  }
+}
