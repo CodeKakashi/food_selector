@@ -11,15 +11,16 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, ConfigurationError
 import os
 
+from config import LOCAL_MONGO_URI, PRODUCTION_KEY, PRODUCTION_MONGO_URI
+
 
 # -----------------------------
 # Configuration (Env-based)
 # -----------------------------
-MONGO_URI = os.getenv(
-    "MONGO_URI",
-    # "mongodb://localhost:27017"  # default fallback
-    "mongodb+srv://admin:123Qwerty*@fooddb.3ymhrhj.mongodb.net/"
-)
+if PRODUCTION_KEY:
+    MONGO_URI = PRODUCTION_MONGO_URI
+else:
+    MONGO_URI = LOCAL_MONGO_URI
 
 DEFAULT_DB_NAME = os.getenv(
     "MONGO_DB_NAME",
