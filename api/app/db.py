@@ -17,7 +17,8 @@ import os
 # -----------------------------
 MONGO_URI = os.getenv(
     "MONGO_URI",
-    "mongodb://localhost:27017"  # default fallback
+    # "mongodb://localhost:27017"  # default fallback
+    "mongodb+srv://admin:123Qwerty*@fooddb.3ymhrhj.mongodb.net/"
 )
 
 DEFAULT_DB_NAME = os.getenv(
