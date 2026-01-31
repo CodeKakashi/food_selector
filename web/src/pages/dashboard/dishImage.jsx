@@ -4,7 +4,7 @@ import { getOneUnsplashImage } from "../../components/function.jsx";
 const FALLBACK_IMAGE =
   "https://via.placeholder.com/300?text=Recipe";
 
-const DishImage = ({ name, course }) => {
+const DishImage = ({ name, course, size = 110 }) => {
   const [imgUrl, setImgUrl] = useState(FALLBACK_IMAGE);
 
   useEffect(() => {
@@ -37,8 +37,8 @@ const DishImage = ({ name, course }) => {
       src={imgUrl}
       alt={name}
       loading="lazy"
-      width={110}
-      height={110}
+      width={size}
+      height={size}
       style={{
         objectFit: "cover",
         borderRadius: 8,

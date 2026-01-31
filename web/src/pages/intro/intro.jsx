@@ -1,5 +1,6 @@
 // LandingPage.jsx
 import React, { useMemo, useState } from "react";
+import "./intro.css";
 import {
     Layout,
     Menu,
@@ -17,7 +18,8 @@ import {
     Collapse,
     Image,
     message,
-    Tooltip
+    Tooltip,
+    Grid
 } from "antd";
 import CustomBackTop from "../../components/customTop";
 import logo from "../../logo.svg";
@@ -85,6 +87,8 @@ const LandingPage = () => {
     const [diet, setDiet] = useState("vegetarian");
     const [course, setCourse] = useState("Main course");
     const navigate = useNavigate();
+    const screens = Grid.useBreakpoint();
+    const isMobile = !screens.sm;
 
 
     const highlight = useMemo(() => {
@@ -107,61 +111,67 @@ const LandingPage = () => {
                     zIndex: 10,
                     background: "#fff",
                     borderBottom: "1px solid rgba(0,0,0,0.06)",
+                    height: "auto",
+                    lineHeight: "normal",
+                    padding: "8px 0",
                 }}
             >
-                <div
-                    style={{
-                        maxWidth: 1200,
-                        margin: "0 auto",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 12,
-                    }}
-                >
-                    <Space align="center" size="middle">
-                        <div
-                            style={{
-                                width: 60,
-                                height: 80,
-                                borderRadius: 10,
-                                display: "grid",
-                                placeItems: "center",
-                            }}
-                            aria-hidden
-                        >
-                            <Image
-                                src={logo}
-                                alt="Thenu's Cook Book logo"
-                                preview={false}
-                                style={{ width: 60, height: 80, display: "block" }}
+                <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px" }}>
+                    <Row align="middle" gutter={[12, 12]}>
+                        <Col xs={24} md={8}>
+                            <Space align="center" size="middle">
+                                <div
+                                    style={{
+                                        width: isMobile ? 48 : 56,
+                                        height: isMobile ? 66 : 76,
+                                        borderRadius: 10,
+                                        display: "grid",
+                                        placeItems: "center",
+                                    }}
+                                    aria-hidden
+                                >
+                                    <Image
+                                        src={logo}
+                                        alt="Thenu's Cook Book logo"
+                                        preview={false}
+                                        style={{
+                                            width: isMobile ? 48 : 56,
+                                            height: isMobile ? 66 : 76,
+                                            display: "block",
+                                        }}
+                                    />
+                                </div>
+                                <Text strong style={{ fontSize: 16 }}>
+                                    Thenu's Cook Book
+                                </Text>
+                            </Space>
+                        </Col>
+
+                        <Col xs={0} md={10}>
+                            <Menu
+                                className="landing-menu"
+                                mode="horizontal"
+                                selectable={false}
+                                style={{ justifyContent: "center", borderBottom: "none" }}
+                                items={[
+                                    { key: "features", label: <a href="#features">Features</a> },
+                                    { key: "how", label: <a href="#how">How it works</a> },
+                                    { key: "faq", label: <a href="#faq">FAQ</a> },
+                                ]}
                             />
-                        </div>
-                        <div>
-                            <Text strong style={{ fontSize: 16 }}>
-                                Thenu's Cook Book
-                            </Text>
+                        </Col>
 
-                        </div>
-                    </Space>
-
-                    <Menu
-                        mode="horizontal"
-                        selectable={false}
-                        style={{ flex: 1, justifyContent: "center", borderBottom: "none" }}
-                        items={[
-                            { key: "features", label: <a href="#features">Features</a> },
-                            { key: "how", label: <a href="#how">How it works</a> },
-                            { key: "faq", label: <a href="#faq">FAQ</a> },
-                        ]}
-                    />
-
-                    <Space>
-                        <Button type="primary" icon={<ArrowRightOutlined />} onClick={onStart}>
-                            Get Started
-                        </Button>
-                    </Space>
+                        <Col xs={24} md={6}>
+                            <Button
+                                type="primary"
+                                icon={<ArrowRightOutlined />}
+                                onClick={onStart}
+                                block={isMobile}
+                            >
+                                Get Started
+                            </Button>
+                        </Col>
+                    </Row>
                 </div>
             </Header>
 
@@ -186,7 +196,7 @@ const LandingPage = () => {
                                         <Tag color="green">Clean UI</Tag>
                                     </Space>
 
-                                    <Title style={{ margin: 0, fontSize: 44, lineHeight: 1.1 }}>
+                                    <Title className="landing-hero-title" style={{ margin: 0, fontSize: 44, lineHeight: 1.1 }}>
                                         Cooking made easy — from what you already have.
                                     </Title>
 

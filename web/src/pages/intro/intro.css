@@ -1,27 +1,34 @@
-.intro-page {
-    text-align: center;
-    padding: 50px;
-    background-color: #f8f8f8;
+.landing-header-inner {
+  padding: 0 16px;
+}
+
+.landing-hero-title {
+  font-size: 44px;
+}
+
+@media (max-width: 900px) {
+  .landing-menu {
+    display: none;
   }
-  
-  .intro-page h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
+}
+
+@media (max-width: 640px) {
+  .landing-header-inner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
   }
-  
-  .intro-page p {
-    font-size: 1.2rem;
-    line-height: 1.5;
-    margin-bottom: 15px;
+
+  .landing-header-cta {
+    width: 100%;
   }
-  
-  .get-started-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+
+  .landing-header-cta .ant-btn {
+    width: 100%;
   }
+
+  .landing-hero-title {
+    font-size: 32px;
+  }
+}
   
