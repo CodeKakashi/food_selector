@@ -1,0 +1,4 @@
+foodapi/api/venv/
+foodapi/api/__pycache__
+foodapi/api/app/__pycache__
+foodapi/api/app/dashboard/__pycache__
