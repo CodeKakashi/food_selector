@@ -3,7 +3,7 @@ import { Layout, Typography, Space } from "antd";
 import {
   GithubOutlined,
   LinkedinOutlined,
-  XOutlined,
+  GlobalOutlined,
 } from "@ant-design/icons";
 
 const { Footer } = Layout;
@@ -51,16 +51,16 @@ const AppFooter = () => {
           </Space>
 
           <Text style={{ fontSize: 13, color: "#64748b" }}>
-            © {new Date().getFullYear()} Food Selector
+            © {new Date().getFullYear()} Thenu's Cook Book. All rights reserved.
           </Text>
         </Space>
 
         {/* RIGHT SIDE – SOCIAL ICONS */}
         <Space size="middle">
           {[
-            { href: "https://github.com/", icon: <GithubOutlined /> },
-            { href: "https://x.com/", icon: <XOutlined /> },
-            { href: "https://linkedin.com/", icon: <LinkedinOutlined /> },
+            { href: "https://github.com/CodeKakashi", icon: <GithubOutlined /> },
+            { href: "https://www.linkedin.com/in/haarish-s-251b78224", icon: <LinkedinOutlined /> },
+            { href: "https://haary-porfolio.vercel.app/", icon: <GlobalOutlined /> },
           ].map((item, i) => (
             <Link
               key={i}

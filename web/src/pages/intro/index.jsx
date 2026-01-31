@@ -84,7 +84,10 @@ const IntroPage = () => {
     };
 
     try {
-      const res = await axios.post("/api/dashboard", payloadToSend);
+      const res = await axios.post(
+        "https://stingy-elva-kuriyeedu-92a44ad8.koyeb.app/api/dashboard",
+        payloadToSend
+      );
 
       const status = res?.data?.status;
       const msg = res?.data?.message;

@@ -20,9 +20,9 @@ import {
     Tooltip
 } from "antd";
 import CustomBackTop from "../../components/customTop";
+import logo from "../../logo.svg";
 
 import {
-    RocketOutlined,
     SearchOutlined,
     CheckCircleOutlined,
     SafetyOutlined,
@@ -123,20 +123,24 @@ const LandingPage = () => {
                     <Space align="center" size="middle">
                         <div
                             style={{
-                                width: 36,
-                                height: 36,
+                                width: 60,
+                                height: 80,
                                 borderRadius: 10,
                                 display: "grid",
                                 placeItems: "center",
-                                background: "rgba(22,119,255,0.12)",
                             }}
                             aria-hidden
                         >
-                            <RocketOutlined />
+                            <Image
+                                src={logo}
+                                alt="Thenu's Cook Book logo"
+                                preview={false}
+                                style={{ width: 60, height: 80, display: "block" }}
+                            />
                         </div>
                         <div>
                             <Text strong style={{ fontSize: 16 }}>
-                                Food Garden
+                                Thenu's Cook Book
                             </Text>
 
                         </div>
@@ -598,7 +602,7 @@ const LandingPage = () => {
                                                 <Divider type="vertical" />
                                                 <div style={{ lineHeight: 1.1 }}>
                                                     <Text strong style={{ fontSize: 16 }}>
-                                                        Food Selector
+                                                        Thenu's Cook Book
                                                     </Text>
                                                     <div>
                                                         <Text type="secondary" style={{ fontSize: 12 }}>
@@ -719,7 +723,7 @@ const LandingPage = () => {
 
             <Footer style={{ textAlign: "center" }}>
                 <Space direction="vertical" size={2}>
-                    <Text strong>Food Selector</Text>
+                    <Text strong>Thenu's Cook Book</Text>
                     <Text type="secondary">© {new Date().getFullYear()} • Built with ❤️</Text>
                 </Space>
             </Footer>

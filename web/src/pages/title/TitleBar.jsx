@@ -1,9 +1,9 @@
 import React from "react";
-import { Layout, Button, Space, Typography, Avatar } from "antd";
+import { Layout, Button, Space, Typography } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import DishImage from "../dashboard/dishImage";
-
+import logo from "../../logo.svg";
+import { Image } from "antd";
 const { Header } = Layout;
 const { Text } = Typography;
 
@@ -24,17 +24,32 @@ const TitleBar = () => {
         zIndex: 100,
       }}
     >
-      <Space
-        align="center"
+      <Space align="center" size="middle"
         style={{ cursor: "pointer" }}
-        onClick={() => navigate("/")}
-      >
-        <Avatar size={40} shape="circle" style={{ background: "transparent" }}>
-          <DishImage name="cat" />
-        </Avatar>
-        <Text strong style={{ fontSize: 16 }}>
-          Food Selector
-        </Text>
+        onClick={() => navigate("/")}>
+        <div
+          style={{
+            width: 60,
+            height: 80,
+            borderRadius: 10,
+            display: "grid",
+            placeItems: "center",
+          }}
+          aria-hidden
+        >
+          <Image
+            src={logo}
+            alt="Thenu's Cook Book logo"
+            preview={false}
+            style={{ width: 60, height: 80, display: "block" }}
+          />
+        </div>
+        <div>
+          <Text strong style={{ fontSize: 16 }}>
+            Thenu's Cook Book
+          </Text>
+
+        </div>
       </Space>
 
       <Button icon={<HomeOutlined />} onClick={() => navigate("/")}>
