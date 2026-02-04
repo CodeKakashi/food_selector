@@ -18,9 +18,18 @@ import {
   Grid,
   Modal,
   Result,
-  Divider
+  Divider,
+  Steps,
+  message
 } from "antd";
-import { YoutubeOutlined, HomeOutlined } from "@ant-design/icons";
+import {
+  YoutubeOutlined,
+  HomeOutlined,
+  DownloadOutlined,
+  ShareAltOutlined,
+  MoreOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomBackTop from "../../components/customTop";
 import DishImage from "./dishImage";
@@ -44,6 +53,15 @@ const RecipeListPage = ({ data = [] }) => {
   const location = useLocation();
   const screens = Grid.useBreakpoint();
   const isMobile = !screens.sm;
+  const { isIOS, isAndroid } = useMemo(() => {
+    if (typeof window === "undefined") return { isIOS: false, isAndroid: false };
+    const ua = window.navigator.userAgent || "";
+    const android = /Android/i.test(ua);
+    const ios =
+      /iPad|iPhone|iPod/i.test(ua) ||
+      (window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
+    return { isIOS: ios, isAndroid: android };
+  }, []);
   const isStandalone =
     typeof window !== "undefined" &&
     (window.matchMedia("(display-mode: standalone)").matches ||
@@ -148,7 +166,9 @@ const RecipeListPage = ({ data = [] }) => {
       deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
       setDeferredPrompt(null);
-      if (choice?.outcome !== "accepted") {
+      if (choice?.outcome === "accepted") {
+        message.success("Installed! Look for the app on your home screen.");
+      } else {
         setShowInstallHelp(true);
       }
       return;
@@ -196,14 +216,14 @@ const RecipeListPage = ({ data = [] }) => {
           {
             noData ? (
               <Card
+                bordered={false}
                 style={{
-                  border: "none",
                   background:
                     "linear-gradient(135deg, rgba(235, 245, 255, 0.9) 0%, rgba(255, 244, 235, 0.9) 100%)",
                   boxShadow: "0 18px 40px rgba(24, 39, 75, 0.08)",
                   borderRadius: 20,
-                  bodyStyle: { padding: isMobile ? 20 : 32 }
                 }}
+                bodyStyle={{ padding: isMobile ? 20 : 32 }}
               >
                 <Result
                   icon={
@@ -416,8 +436,9 @@ const RecipeListPage = ({ data = [] }) => {
               boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
               paddingInline: 18,
             }}
+            icon={<DownloadOutlined />}
           >
-            Make it an App
+            Install App
           </Button>
 
           <Modal
@@ -426,24 +447,89 @@ const RecipeListPage = ({ data = [] }) => {
             onCancel={() => setShowInstallHelp(false)}
             onOk={() => setShowInstallHelp(false)}
             okText="Got it"
+            cancelText="Close"
           >
-            <Text>
-              If you don’t see an install prompt, follow the steps below:
-            </Text>
-            <div style={{ marginTop: 12 }}>
-              <Text strong>iPhone / iPad (Safari)</Text>
-              <ul style={{ paddingLeft: 20, marginTop: 6 }}>
-                <li>Tap the Share icon (square with arrow).</li>
-                <li>Choose “Add to Home Screen”.</li>
-              </ul>
-            </div>
-            <div style={{ marginTop: 12 }}>
-              <Text strong>Android (Chrome)</Text>
-              <ul style={{ paddingLeft: 20, marginTop: 6 }}>
-                <li>Open the browser menu (⋮).</li>
-                <li>Tap “Install app” or “Add to Home screen”.</li>
-              </ul>
-            </div>
+            <Flex vertical gap="middle">
+              <Text>
+                We can’t add apps to your home screen automatically (mobile browsers require a user
+                action), but you can install it in under 10 seconds:
+              </Text>
+
+              <Alert
+                type="info"
+                showIcon
+                message={
+                  isIOS
+                    ? "iPhone/iPad: Install is manual"
+                    : isAndroid
+                      ? "Android: Use the install option"
+                      : "Desktop: Use your browser install option"
+                }
+                description={
+                  isIOS
+                    ? "On iOS there is no install popup. Use the Share menu → Add to Home Screen."
+                    : "If you don’t see a popup, use the browser menu to install."
+                }
+              />
+
+              <Steps
+                direction="vertical"
+                size="small"
+                items={
+                  isIOS
+                    ? [
+                        {
+                          title: "Open the Share menu",
+                          description: (
+                            <span>
+                              Tap <ShareAltOutlined /> in Safari.
+                            </span>
+                          ),
+                        },
+                        {
+                          title: "Add to Home Screen",
+                          description: (
+                            <span>
+                              Scroll and tap <PlusOutlined /> <Text strong>Add to Home Screen</Text>.
+                            </span>
+                          ),
+                        },
+                        {
+                          title: "Confirm",
+                          description: "Tap Add. The app icon will appear on your home screen.",
+                        },
+                      ]
+                    : [
+                        {
+                          title: "Open browser menu",
+                          description: (
+                            <span>
+                              Tap <MoreOutlined /> (three dots) in Chrome.
+                            </span>
+                          ),
+                        },
+                        {
+                          title: "Install",
+                          description: (
+                            <span>
+                              Tap <Text strong>Install app</Text> or <Text strong>Add to Home screen</Text>,
+                              then confirm.
+                            </span>
+                          ),
+                        },
+                        {
+                          title: "Launch",
+                          description: "Open it from your home screen for a full-screen app experience.",
+                        },
+                      ]
+                }
+              />
+
+              <Text type="secondary">
+                Tip: If you’re in private/incognito mode, or not on HTTPS (production), install may not
+                be available.
+              </Text>
+            </Flex>
           </Modal>
         </>
       )}
