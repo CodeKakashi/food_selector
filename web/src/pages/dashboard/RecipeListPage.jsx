@@ -16,6 +16,9 @@ import {
   Alert,
   Image,
   Grid,
+  Modal,
+  Result,
+  Divider
 } from "antd";
 import { YoutubeOutlined, HomeOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -23,8 +26,17 @@ import CustomBackTop from "../../components/customTop";
 import DishImage from "./dishImage";
 import RecipeFilters from "./RecipeFilters";
 import resultIcon from "../../assets/result.svg";
+import noDataIcon from "../../assets/noData.svg";
 
 const { Text, Title, Link } = Typography;
+
+const scrollToItem = (itemId) => {
+  const element = document.getElementById(itemId);
+
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth' });
+  }
+};
 
 const RecipeListPage = ({ data = [] }) => {
   const [form] = Form.useForm();
@@ -32,6 +44,10 @@ const RecipeListPage = ({ data = [] }) => {
   const location = useLocation();
   const screens = Grid.useBreakpoint();
   const isMobile = !screens.sm;
+  const isStandalone =
+    typeof window !== "undefined" &&
+    (window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true);
 
   // ✅ read recipes passed from IntroPage navigate state
   const recipesFromState = location?.state?.filtered_recipes || [];
@@ -42,6 +58,9 @@ const RecipeListPage = ({ data = [] }) => {
   const selectedIngredients =
     location?.state?.ingredients ||
     JSON.parse(localStorage.getItem("selectedIngredients") || "[]");
+
+
+  const noData = finalData.length === 0;
 
   // pagination
   const [page, setPage] = useState(1);
@@ -95,6 +114,8 @@ const RecipeListPage = ({ data = [] }) => {
     return filteredData.slice(start, start + pageSize);
   }, [filteredData, page, pageSize]);
 
+  scrollToItem('recipeList');
+
   // keep page valid
   useEffect(() => {
     const maxPage = Math.max(1, Math.ceil(filteredData.length / pageSize));
@@ -105,6 +126,36 @@ const RecipeListPage = ({ data = [] }) => {
   useEffect(() => {
     setPage(1);
   }, [filters, pageSize]);
+
+  // capture install prompt (Chrome/Edge/Android)
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallHelp, setShowInstallHelp] = useState(false);
+
+  useEffect(() => {
+    const onBeforeInstallPrompt = (event) => {
+      event.preventDefault();
+      setDeferredPrompt(event);
+    };
+
+    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      setDeferredPrompt(null);
+      if (choice?.outcome !== "accepted") {
+        setShowInstallHelp(true);
+      }
+      return;
+    }
+
+    setShowInstallHelp(true);
+  };
 
   const onResetFilters = () => {
     form.resetFields();
@@ -142,141 +193,190 @@ const RecipeListPage = ({ data = [] }) => {
             }
             closable
           />
+          {
+            noData ? (
+              <Card
+                style={{
+                  border: "none",
+                  background:
+                    "linear-gradient(135deg, rgba(235, 245, 255, 0.9) 0%, rgba(255, 244, 235, 0.9) 100%)",
+                  boxShadow: "0 18px 40px rgba(24, 39, 75, 0.08)",
+                  borderRadius: 20,
+                  bodyStyle: { padding: isMobile ? 20 : 32 }
+                }}
+              >
+                <Result
+                  icon={
+                    <Image
+                      src={noDataIcon}
+                      alt="no data"
+                      preview={false}
+                      width={isMobile ? 240 : 320}
+                    />
+                  }
+                  title="No recipes found"
+                  subTitle="Your current ingredients and filters didn’t return any matches. Try using different ingredients or remove some ingredients."
+                  extra={
+                    <Space wrap>
+                      <Button
+                        type="primary"
+                        icon={<HomeOutlined />}
+                        onClick={() => navigate("/intro")}
+                      >
+                        Try Again
+                      </Button>
+                    </Space>
+                  }
+                />
+                <Divider />
+                <Flex vertical gap="small">
+                  <Text strong>Selected ingredients</Text>
+                  {selectedIngredients.length > 0 ? (
+                    <Space wrap>
+                      {selectedIngredients.map((item) => (
+                        <Tag key={item} color="blue">
+                          {item}
+                        </Tag>
+                      ))}
+                    </Space>
+                  ) : (
+                    <Text type="secondary">No ingredients provided</Text>
+                  )}
+                </Flex>
+              </Card>
+            ) : <Col>
+              <Row align="middle" justify="space-between" gutter={[12, 12]}>
+                <Col xs={24} sm={16}>
+                  <Title level={3}>Filtered Recipes</Title>
+                </Col>
 
-          <Flex justify="center">
-            <Image src={resultIcon} alt="recipe" preview={false} width={isMobile ? 320 : 500} />
-          </Flex>
-
-          <Row align="middle" justify="space-between" gutter={[12, 12]}>
-            <Col xs={24} sm={16}>
-              <Title level={3}>Filtered Recipes</Title>
-            </Col>
-
-            <Col xs={24} sm={8}>
+                {/* <Col xs={24} sm={8}>
               <Button icon={<HomeOutlined />} onClick={() => navigate("/")} block={isMobile}>
                 Home
               </Button>
+            </Col> */}
+              </Row>
+              <RecipeFilters
+                form={form}
+                data={finalData}
+                total={filteredData.length}
+                onReset={onResetFilters}
+                sticky={!isMobile}
+              />
+
+              <List
+                itemLayout="vertical"
+                size={isMobile ? "small" : "large"}
+                id="recipeList"
+                dataSource={pagedData}
+                renderItem={(item) => (
+                  <List.Item key={item._id || item.name} >
+                    <Card size={isMobile ? "small" : "large"} >
+                      <Row gutter={[16, 16]} align="top" justify={isMobile ? "center" : "start"}>
+                        <Col xs={24} sm={8} md={6} style={{ display: "flex", justifyContent: "center" }}>
+                          <Flex justify="center">
+                            <DishImage name={item.name} course={item.course} size={isMobile ? 110 : 160} />
+                          </Flex>
+                        </Col>
+
+                        <Col xs={24} sm={16} md={18}>
+                          <Flex vertical gap="middle">
+                            <Flex justify="space-between" align="center" wrap>
+                              <Title level={4} style={{ marginBottom: 0 }}>
+                                {item.name}
+                              </Title>
+
+                              {(() => {
+                                const diet = (item.diet || "").toLowerCase();
+                                const isVeg = diet === "vegetarian";
+
+                                return (
+                                  <Tag color={isVeg ? "green" : "red"}>
+                                    {diet ? diet.charAt(0).toUpperCase() + diet.slice(1) : "Unknown"}
+                                  </Tag>
+                                );
+                              })()}
+                            </Flex>
+
+                            <Space wrap size="small">
+                              <Tag color="blue">{item.course || "Unknown course"}</Tag>
+                              <Tag color="purple">{item.state || "Unknown state"}</Tag>
+                              <Tag>Prep: {item.prep_time ?? "?"} min</Tag>
+                              <Tag>Cook: {item.cook_time ?? "?"} min</Tag>
+                            </Space>
+
+                            <Space wrap align="center">
+                              <Text strong>Ingredients:</Text>
+                              <Tag color="green">Available</Tag>
+                              <Tag color="volcano">Missing</Tag>
+                            </Space>
+
+                            <List
+                              size="default"
+                              dataSource={(() => {
+                                const allIngredients = String(item.ingredients || "")
+                                  .split(",")
+                                  .map((s) => s.trim())
+                                  .filter(Boolean);
+
+                                const missingSet = new Set(
+                                  (item.missing_ingredients?.missing_ingredients || [])
+                                    .map((s) => String(s).trim().toLowerCase())
+                                    .filter(Boolean)
+                                );
+
+                                return allIngredients.map((ing) => ({
+                                  name: ing,
+                                  isMissing: missingSet.has(ing.toLowerCase()),
+                                }));
+                              })()}
+                              renderItem={(ing) => {
+                                const displayName =
+                                  ing.name.length > 32 ? `${ing.name.slice(0, 29)}...` : ing.name;
+                                return (
+                                  <List.Item>
+                                    <Tag color={ing.isMissing ? "volcano" : "green"}>
+                                      <Tooltip title={ing.name}>
+                                        <Link
+                                          href={`https://www.google.com/search?q=what+is+${encodeURIComponent(
+                                            ing.name
+                                          )}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          {displayName}
+                                        </Link>
+                                      </Tooltip>
+                                    </Tag>
+                                  </List.Item>
+                                );
+                              }}
+                            />
+
+                            <Tooltip title="Watch on YouTube">
+                              <Button
+                                type="primary"
+                                danger
+                                icon={<YoutubeOutlined />}
+                                href={item.youtube_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                disabled={!item.youtube_link}
+                                block={isMobile}
+                              >
+                                Watch on YouTube
+                              </Button>
+                            </Tooltip>
+                          </Flex>
+                        </Col>
+                      </Row>
+                    </Card>
+                  </List.Item>
+                )}
+              />
+
             </Col>
-          </Row>
-
-          <RecipeFilters
-            form={form}
-            data={finalData}
-            total={filteredData.length}
-            onReset={onResetFilters}
-            sticky={!isMobile}
-          />
-
-          <List
-            itemLayout="vertical"
-            size="large"
-            dataSource={pagedData}
-            renderItem={(item) => (
-              <List.Item key={item._id || item.name}>
-                <Card size={isMobile ? "small" : "default"}>
-                  <Row gutter={[16, 16]} align="top" justify={isMobile ? "center" : "start"}>
-                    <Col xs={24} sm={8} md={6}>
-                      <Flex justify={isMobile ? "center" : "flex-start"}>
-                        <DishImage name={item.name} course={item.course} size={isMobile ? 96 : 110} />
-                      </Flex>
-                    </Col>
-
-                    <Col xs={24} sm={16} md={18}>
-                      <Flex vertical gap="middle">
-                        <Flex justify="space-between" align="center" wrap>
-                          <Title level={4}>{item.name}</Title>
-
-                          {(() => {
-                            const diet = (item.diet || "").toLowerCase();
-                            const isVeg = diet === "vegetarian";
-
-                            return (
-                              <Tag color={isVeg ? "green" : "red"}>
-                                {diet ? diet.charAt(0).toUpperCase() + diet.slice(1) : "Unknown"}
-                              </Tag>
-                            );
-                          })()}
-                        </Flex>
-
-                        <Space wrap size="small">
-                          <Tag color="blue">{item.course || "Unknown course"}</Tag>
-                          <Tag color="purple">{item.state || "Unknown state"}</Tag>
-                          <Tag>Prep: {item.prep_time ?? "?"} min</Tag>
-                          <Tag>Cook: {item.cook_time ?? "?"} min</Tag>
-                        </Space>
-
-                        <Space wrap>
-                          <Text strong>Ingredients:</Text>
-                          <Tag color="green">Available</Tag>
-                          <Tag color="volcano">Missing</Tag>
-                        </Space>
-
-                        <List
-                          size="small"
-                          split={false}
-                          grid={{ gutter: 8, column: isMobile ? 1 : 2 }}
-                          dataSource={(() => {
-                            const allIngredients = String(item.ingredients || "")
-                              .split(",")
-                              .map((s) => s.trim())
-                              .filter(Boolean);
-
-                            const missingSet = new Set(
-                              (item.missing_ingredients?.missing_ingredients || [])
-                                .map((s) => String(s).trim().toLowerCase())
-                                .filter(Boolean)
-                            );
-
-                            return allIngredients.map((ing) => ({
-                              name: ing,
-                              isMissing: missingSet.has(ing.toLowerCase()),
-                            }));
-                          })()}
-                          renderItem={(ing) => {
-                            const displayName =
-                              ing.name.length > 32 ? `${ing.name.slice(0, 29)}...` : ing.name;
-                            return (
-                              <List.Item>
-                                <Tag color={ing.isMissing ? "volcano" : "green"}>
-                                  <Tooltip title={ing.name}>
-                                    <Link
-                                      href={`https://www.google.com/search?q=what+is+${encodeURIComponent(
-                                        ing.name
-                                      )}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      {displayName}
-                                    </Link>
-                                  </Tooltip>
-                                </Tag>
-                              </List.Item>
-                            );
-                          }}
-                        />
-
-                        <Tooltip title="Watch on YouTube">
-                          <Button
-                            type="primary"
-                            danger
-                            icon={<YoutubeOutlined />}
-                            href={item.youtube_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            disabled={!item.youtube_link}
-                            block={isMobile}
-                          >
-                            Watch on YouTube
-                          </Button>
-                        </Tooltip>
-                      </Flex>
-                    </Col>
-                  </Row>
-                </Card>
-              </List.Item>
-            )}
-          />
-
+          }
           {filteredData.length > 0 && (
             <Flex justify="center">
               <Pagination
@@ -297,9 +397,67 @@ const RecipeListPage = ({ data = [] }) => {
           )}
 
           <CustomBackTop />
+
         </Flex>
+
       </Col>
+      {!isStandalone && (
+        <>
+          <Button
+            shape="round"
+            onClick={handleInstallClick}
+            color="cyan"
+            variant="filled"
+            style={{
+              position: "fixed",
+              left: 20,
+              bottom: 24,
+              zIndex: 1000,
+              boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
+              paddingInline: 18,
+            }}
+          >
+            Make it an App
+          </Button>
+
+          <Modal
+            title="Add to Home Screen"
+            open={showInstallHelp}
+            onCancel={() => setShowInstallHelp(false)}
+            onOk={() => setShowInstallHelp(false)}
+            okText="Got it"
+          >
+            <Text>
+              If you don’t see an install prompt, follow the steps below:
+            </Text>
+            <div style={{ marginTop: 12 }}>
+              <Text strong>iPhone / iPad (Safari)</Text>
+              <ul style={{ paddingLeft: 20, marginTop: 6 }}>
+                <li>Tap the Share icon (square with arrow).</li>
+                <li>Choose “Add to Home Screen”.</li>
+              </ul>
+            </div>
+            <div style={{ marginTop: 12 }}>
+              <Text strong>Android (Chrome)</Text>
+              <ul style={{ paddingLeft: 20, marginTop: 6 }}>
+                <li>Open the browser menu (⋮).</li>
+                <li>Tap “Install app” or “Add to Home screen”.</li>
+              </ul>
+            </div>
+          </Modal>
+        </>
+      )}
+      {
+        !noData && (
+          <Flex justify="center">
+            <Image src={resultIcon} alt="recipe" preview={false} width={isMobile ? 320 : 500} />
+          </Flex>
+        )
+      }
+
     </Row>
+
+
   );
 };
 

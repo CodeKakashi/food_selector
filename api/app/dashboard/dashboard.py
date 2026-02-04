@@ -70,6 +70,7 @@ class Dashboard(Resource):
         payload = {
             "filtered_recipes": filtered_df.to_dict(orient="records"),
         }
+        print(payload)
 
         return {
             "status": 1,

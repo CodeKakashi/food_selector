@@ -1,13 +1,13 @@
 import axios from "axios";
+import { API_KEY, PIXAL_BASE_URL } from "../config";
 
 export async function getOneUnsplashImage(searchQuery) {
   if (!searchQuery) return null;
 
   try {
-    const API_KEY = "53902089-e2509bdc126a962ae684544ce"; // keep your key
 
     const resp = await axios.get(
-      "https://pixabay.com/api/",
+      PIXAL_BASE_URL,
       {
         params: {
           key: API_KEY,

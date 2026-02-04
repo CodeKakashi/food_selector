@@ -1,6 +1,6 @@
 // DashboardPage.jsx (Guard)
-import React, { useMemo } from "react";
-import { useLocation, Navigate } from "react-router-dom";
+import { useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import RecipeListPage from "./RecipeListPage";
 
 const DashboardGuard = () => {
@@ -42,13 +42,14 @@ const DashboardGuard = () => {
       : ingredientsFromStorage;
 
   // If nothing exists anywhere, go home
-  if (!finalRecipes || finalRecipes.length === 0) {
-    return <Navigate to="/" replace />;
-  }
+  // if (!finalRecipes || finalRecipes.length === 0) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   // ✅ Pass through same state shape your RecipeListPage uses
   return (
     <RecipeListPage
+      id="recipe-list"
       data={finalRecipes}
       // Optional: you already read from location.state inside RecipeListPage,
       // but passing these props can help if you later refactor.

@@ -13,3 +13,20 @@ root.render(
 );
 
 reportWebVitals();
+
+const isProd = process.env.NODE_ENV === "production";
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    if (isProd) {
+      navigator.serviceWorker.register(
+        `${process.env.PUBLIC_URL}/service-worker.js`
+      );
+    } else {
+      // Avoid SW caching and reload loops during development.
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((reg) => reg.unregister());
+      });
+    }
+  });
+}

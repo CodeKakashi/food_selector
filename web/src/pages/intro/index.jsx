@@ -19,6 +19,7 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import recipeIcon from "../../assets/recipe.svg";
+import { BASE_URL } from "../../config";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -103,7 +104,7 @@ const IntroPage = () => {
 
     try {
       const res = await axios.post(
-        "https://stingy-elva-kuriyeedu-92a44ad8.koyeb.app/api/dashboard",
+        BASE_URL,
         payloadToSend
       );
 
@@ -117,7 +118,7 @@ const IntroPage = () => {
         navigate("/dashboard", {
           state: {
             filtered_recipes: filteredRecipes,
-            ingredients: ingredientsArray, // ✅ MUST ADD
+            ingredients: ingredientsArray, 
           },
         });
 
@@ -181,13 +182,7 @@ const IntroPage = () => {
                 title: "Steps",
                 description: "Move to Details to refine your results.",
                 target: () => stepsRef.current,
-              },
-              {
-                title: "Details",
-                description: "Optional filters like diet, time, course, and state.",
-                target: () => detailsRef.current,
-              },
-            ]}
+              }]}
           />
           <Flex justify="center">
             <Image
@@ -244,13 +239,13 @@ const IntroPage = () => {
             {/* ✅ STEP 2: DETAILS (ALL OTHERS) */}
             {currentStep === 1 && (
               <div style={{ marginTop: 16 }} ref={detailsRef}>
-                <Form.Item name="name" label="Recipe Name">
+                <Form.Item name="name" label="Recipe Name (Optional)">
                   <Input placeholder="e.g. lassi" allowClear />
                 </Form.Item>
 
                 <Form.Item
                   name="prep_time"
-                  label="Preparation Time (minutes)"
+                  label="Preparation Time (minutes) (Optional)"
                   rules={[{ type: "number", min: 0, message: "Must be >= 0" }]}
                 >
                   <InputNumber min={0} style={{ width: "100%" }} />
@@ -258,13 +253,13 @@ const IntroPage = () => {
 
                 <Form.Item
                   name="cook_time"
-                  label="Cooking Time (minutes)"
+                  label="Cooking Time (minutes) (Optional)"
                   rules={[{ type: "number", min: 0, message: "Must be >= 0" }]}
                 >
                   <InputNumber min={0} style={{ width: "100%" }} />
                 </Form.Item>
 
-                <Form.Item name="diet" label="Diet">
+                <Form.Item name="diet" label="Diet (Optional)">
                   <Select placeholder="Select diet" allowClear>
                     <Option value="vegetarian">Vegetarian</Option>
                     <Option value="non-vegetarian">Non-Vegetarian</Option>
@@ -272,7 +267,7 @@ const IntroPage = () => {
                   </Select>
                 </Form.Item>
 
-                <Form.Item name="course" label="Course">
+                <Form.Item name="course" label="Course (Optional)">
                   <Select placeholder="Select course" allowClear>
                     <Option value="starter">Starter</Option>
                     <Option value="main course">Main Course</Option>
@@ -281,7 +276,7 @@ const IntroPage = () => {
                   </Select>
                 </Form.Item>
 
-                <Form.Item name="state" label="State">
+                <Form.Item name="state" label="State (Optional)">
                   <Select placeholder="Select state" allowClear>
                     <Option value="Punjab">Punjab</Option>
                     <Option value="Kerala">Kerala</Option>
