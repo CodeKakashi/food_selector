@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import "../components/notFound.css";
 import { Link } from "react-router-dom";
+import ThemeToggle from "./ThemeToggle.jsx";
 
 const NotFound = () => {
   const containerRef = useRef(null);
@@ -39,6 +40,7 @@ const NotFound = () => {
 
   return (
     <div className="not-found-container" ref={containerRef}>
+      <ThemeToggle />
       <div className="not-found-parallax layer-one" aria-hidden="true" />
       <div className="not-found-parallax layer-two" aria-hidden="true" />
       <div className="not-found-card">

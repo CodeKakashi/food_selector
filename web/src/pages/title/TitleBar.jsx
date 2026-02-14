@@ -1,9 +1,9 @@
 import React from "react";
-import { Layout, Button, Space, Typography, Grid, Row, Col } from "antd";
+import { Layout, Button, Space, Typography, Grid, Row, Col, Image } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import logo from "../../logo.svg";
-import { Image } from "antd";
+import ThemeToggle from "../../components/ThemeToggle.jsx";
 const { Header } = Layout;
 const { Text } = Typography;
 
@@ -13,24 +13,13 @@ const TitleBar = () => {
   const isMobile = !screens.sm;
 
   return (
-    <Header
-      style={{
-        background: "#fff",
-        padding: isMobile ? "8px 12px" : "0 24px",
-        height: "auto",
-        lineHeight: "normal",
-        borderBottom: "1px solid rgba(0,0,0,0.06)",
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
-      }}
-    >
-      <Row align="middle" gutter={[12, 12]} style={{ width: "100%" }}>
+    <Header className="app-header" style={{ padding: isMobile ? "8px 12px" : "10px 24px" }}>
+      <Row align="middle" gutter={[12, 12]} className="app-header-row">
         <Col xs={24} sm={16}>
           <Space
             align="center"
             size="middle"
-            style={{ cursor: "pointer" }}
+            className="app-brand"
             onClick={() => navigate("/")}
           >
             <div
@@ -54,16 +43,29 @@ const TitleBar = () => {
                 }}
               />
             </div>
-            <Text strong style={{ fontSize: 16 }}>
+            <Text strong className="app-brand-name">
               Thenu's Cook Book
             </Text>
           </Space>
         </Col>
 
         <Col xs={24} sm={8}>
-          <Button icon={<HomeOutlined />} onClick={() => navigate("/")} block={isMobile}>
-            Home
-          </Button>
+          <Space
+            size="middle"
+            align="center"
+            className="app-header-actions"
+            direction={isMobile ? "vertical" : "horizontal"}
+          >
+            <Button
+              icon={<HomeOutlined />}
+              onClick={() => navigate("/")}
+              block={isMobile}
+              className="lp-secondary app-home-btn"
+            >
+              Home
+            </Button>
+            <ThemeToggle placement="inline" />
+          </Space>
         </Col>
       </Row>
     </Header>

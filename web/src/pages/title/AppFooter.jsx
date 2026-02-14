@@ -11,24 +11,9 @@ const { Text, Link } = Typography;
 
 const AppFooter = () => {
   return (
-    <Footer
-      style={{
-        background: "#ffffff",
-        borderTop: "1px solid #e5e7eb",
-        padding: "28px 48px",
-        color: "#475569",
-      }}
-    >
+    <Footer className="app-footer">
       <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 16,
-        }}
+        className="app-footer-inner"
       >
         {/* LEFT SIDE */}
         <Space direction="vertical" size={6}>
@@ -36,21 +21,21 @@ const AppFooter = () => {
             <Link
               href="/privacy"
               underline={false}
-              style={{ color: "#2563eb", fontWeight: 500 }}
+              className="app-footer-link"
             >
               Privacy Policy
             </Link>
-            <Text style={{ color: "#94a3b8" }}>•</Text>
+            <Text className="app-footer-sep">•</Text>
             <Link
               href="/terms"
               underline={false}
-              style={{ color: "#2563eb", fontWeight: 500 }}
+              className="app-footer-link"
             >
               Terms of Service
             </Link>
           </Space>
 
-          <Text style={{ fontSize: 13, color: "#64748b" }}>
+          <Text className="app-footer-copy">
             © {new Date().getFullYear()} Thenu's Cook Book. All rights reserved.
           </Text>
         </Space>
@@ -66,25 +51,7 @@ const AppFooter = () => {
               key={i}
               href={item.href}
               target="_blank"
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                border: "1px solid #e5e7eb",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#2563eb",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#2563eb";
-                e.currentTarget.style.background = "#eff6ff";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#e5e7eb";
-                e.currentTarget.style.background = "transparent";
-              }}
+              className="app-social-link"
             >
               {item.icon}
             </Link>

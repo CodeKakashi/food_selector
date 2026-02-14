@@ -21,6 +21,7 @@ import {
     Grid
 } from "antd";
 import CustomBackTop from "../../components/customTop";
+import ThemeToggle from "../../components/ThemeToggle.jsx";
 import logo from "../../logo.svg";
 import basilSvg from "../../assets/ingredients/basil.svg";
 import lemonSvg from "../../assets/ingredients/lemon.svg";
@@ -331,15 +332,22 @@ const LandingPage = () => {
                             </Col>
 
                             <Col xs={24} md={6}>
-                                <Button
-                                    type="primary"
-                                    icon={<ArrowRightOutlined />}
-                                    onClick={onStart}
-                                    block={isMobile}
-                                    className="lp-primary"
+                                <Space
+                                    direction={isMobile ? "vertical" : "horizontal"}
+                                    align="center"
+                                    style={{ width: "100%", justifyContent: isMobile ? "stretch" : "flex-end" }}
                                 >
-                                    Get Started
-                                </Button>
+                                    <Button
+                                        type="primary"
+                                        icon={<ArrowRightOutlined />}
+                                        onClick={onStart}
+                                        block={isMobile}
+                                        className="lp-primary"
+                                    >
+                                        Get Started
+                                    </Button>
+                                    <ThemeToggle placement="inline" />
+                                </Space>
                             </Col>
                         </Row>
                     </div>

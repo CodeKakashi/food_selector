@@ -1,5 +1,6 @@
 // RecipeListPage.jsx
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
+import "./dashboard.css";
 import {
   List,
   Card,
@@ -36,6 +37,9 @@ import DishImage from "./dishImage";
 import RecipeFilters from "./RecipeFilters";
 import resultIcon from "../../assets/result.svg";
 import noDataIcon from "../../assets/noData.svg";
+import basilSvg from "../../assets/ingredients/basil.svg";
+import lemonSvg from "../../assets/ingredients/lemon.svg";
+import pepperSvg from "../../assets/ingredients/pepper.svg";
 
 const { Text, Title, Link } = Typography;
 
@@ -48,6 +52,7 @@ const scrollToItem = (itemId) => {
 };
 
 const RecipeListPage = ({ data = [] }) => {
+  const rootRef = useRef(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
@@ -66,6 +71,57 @@ const RecipeListPage = ({ data = [] }) => {
     typeof window !== "undefined" &&
     (window.matchMedia("(display-mode: standalone)").matches ||
       window.navigator.standalone === true);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || typeof window === "undefined") return;
+
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    if (reduceMotion) return;
+
+    let targetScroll = window.scrollY || 0;
+    let currentScroll = targetScroll;
+    let mx = 0;
+    let my = 0;
+    let raf = 0;
+
+    const onScroll = () => {
+      targetScroll = window.scrollY || 0;
+    };
+
+    const onPointer = (e) => {
+      const w = window.innerWidth || 1;
+      const h = window.innerHeight || 1;
+      mx = (e.clientX / w - 0.5) * 2;
+      my = (e.clientY / h - 0.5) * 2;
+    };
+
+    const tick = () => {
+      currentScroll += (targetScroll - currentScroll) * 0.085;
+
+      const bgTx = mx * 10;
+      const bgTy = -currentScroll * 0.12 + my * 8;
+      const midTx = mx * 22;
+      const midTy = -currentScroll * 0.5 + my * 14;
+
+      root.style.setProperty("--lp-bg-tx", `${bgTx.toFixed(1)}px`);
+      root.style.setProperty("--lp-bg-ty", `${bgTy.toFixed(1)}px`);
+      root.style.setProperty("--lp-mid-tx", `${midTx.toFixed(1)}px`);
+      root.style.setProperty("--lp-mid-ty", `${midTy.toFixed(1)}px`);
+
+      raf = window.requestAnimationFrame(tick);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pointermove", onPointer, { passive: true });
+    tick();
+
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pointermove", onPointer);
+    };
+  }, []);
 
   // ✅ read recipes passed from IntroPage navigate state
   const recipesFromState = location?.state?.filtered_recipes || [];
@@ -183,251 +239,341 @@ const RecipeListPage = ({ data = [] }) => {
   };
 
   return (
-    <Row justify="center">
-      <Col xs={24} sm={22} md={20} lg={18} xl={16}>
-        <Flex vertical gap="large">
-          <Alert
-            type="info"
-            showIcon
-            message="Selected Ingredients"
-            description={
-              <Flex vertical gap="small">
-                <Text>
-                  The ingredients that you have selected are{" "}
-                  <Text strong>
-                    {selectedIngredients.length > 0
-                      ? selectedIngredients.join(", ")
-                      : "Not provided"}
-                  </Text>
-                  . Results are based on this.
-                </Text>
-
-                <Text>
-                  If you want to update ingredients, go back to{" "}
-                  <Button type="link" icon={<HomeOutlined />} onClick={() => navigate("/")}>
-                    Home
-                  </Button>{" "}
-                  and update. Otherwise, use the filters to update what you need.
-                </Text>
-              </Flex>
-            }
-            closable
+    <div className="lp-root dash-root" ref={rootRef}>
+      <div className="lp-scene" aria-hidden="true">
+        <div className="lp-bg" />
+        <div className="lp-mid">
+          <img
+            className="lp-float basil is-lg"
+            data-kind="basil"
+            src={basilSvg}
+            alt=""
+            style={{ left: "6%", top: "18%" }}
+            loading="lazy"
           />
-          {
-            noData ? (
-              <Card
-                bordered={false}
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(235, 245, 255, 0.9) 0%, rgba(255, 244, 235, 0.9) 100%)",
-                  boxShadow: "0 18px 40px rgba(24, 39, 75, 0.08)",
-                  borderRadius: 20,
-                }}
-                bodyStyle={{ padding: isMobile ? 20 : 32 }}
-              >
-                <Result
-                  icon={
-                    <Image
-                      src={noDataIcon}
-                      alt="no data"
-                      preview={false}
-                      width={isMobile ? 240 : 320}
-                    />
+          <img
+            className="lp-float lemon"
+            data-kind="lemon"
+            src={lemonSvg}
+            alt=""
+            style={{ right: "8%", top: "12%" }}
+            loading="lazy"
+          />
+          <img
+            className="lp-float pepper is-sm"
+            data-kind="pepper"
+            src={pepperSvg}
+            alt=""
+            style={{ left: "14%", bottom: "12%" }}
+            loading="lazy"
+          />
+          <img
+            className="lp-float lemon is-sm"
+            data-kind="lemon"
+            src={lemonSvg}
+            alt=""
+            style={{ right: "18%", bottom: "10%" }}
+            loading="lazy"
+          />
+          <img
+            className="lp-float basil is-sm"
+            data-kind="basil"
+            src={basilSvg}
+            alt=""
+            style={{ left: "42%", top: "54%" }}
+            loading="lazy"
+          />
+        </div>
+        <div className="lp-vignette" />
+      </div>
+
+      <section className="dash-hero">
+        <div className="lp-container">
+          <Row justify="center">
+            <Col xs={24} sm={22} md={20} lg={18} xl={16}>
+              <Flex vertical gap="large" className="dash-stack">
+                <Alert
+                  type="info"
+                  showIcon
+                  className="dash-alert lp-glass-card"
+                  message={<span className="dash-alert-title">Selected Ingredients</span>}
+                  description={
+                    <Flex vertical gap="small">
+                      <Text>
+                        The ingredients that you have selected are{" "}
+                        <Text strong className="dash-ingredients-value">
+                          {selectedIngredients.length > 0
+                            ? selectedIngredients.join(", ")
+                            : "Not provided"}
+                        </Text>
+                        . Results are based on this.
+                      </Text>
+
+                      <Text>
+                        If you want to update ingredients, go back to{" "}
+                        <Button
+                          type="link"
+                          icon={<HomeOutlined />}
+                          onClick={() => navigate("/")}
+                          className="lp-link"
+                        >
+                          Home
+                        </Button>{" "}
+                        and update. Otherwise, use the filters to update what you need.
+                      </Text>
+                    </Flex>
                   }
-                  title="No recipes found"
-                  subTitle="Your current ingredients and filters didn’t return any matches. Try using different ingredients or remove some ingredients."
-                  extra={
-                    <Space wrap>
-                      <Button
-                        type="primary"
-                        icon={<HomeOutlined />}
-                        onClick={() => navigate("/intro")}
-                      >
-                        Try Again
-                      </Button>
-                    </Space>
-                  }
+                  closable
                 />
-                <Divider />
-                <Flex vertical gap="small">
-                  <Text strong>Selected ingredients</Text>
-                  {selectedIngredients.length > 0 ? (
-                    <Space wrap>
-                      {selectedIngredients.map((item) => (
-                        <Tag key={item} color="blue">
-                          {item}
-                        </Tag>
-                      ))}
-                    </Space>
-                  ) : (
-                    <Text type="secondary">No ingredients provided</Text>
-                  )}
-                </Flex>
-              </Card>
-            ) : <Col>
-              <Row align="middle" justify="space-between" gutter={[12, 12]}>
-                <Col xs={24} sm={16}>
-                  <Title level={3}>Filtered Recipes</Title>
-                </Col>
 
-                {/* <Col xs={24} sm={8}>
-              <Button icon={<HomeOutlined />} onClick={() => navigate("/")} block={isMobile}>
-                Home
-              </Button>
-            </Col> */}
-              </Row>
-              <RecipeFilters
-                form={form}
-                data={finalData}
-                total={filteredData.length}
-                onReset={onResetFilters}
-                sticky={!isMobile}
-              />
+                {noData ? (
+                  <Card
+                    bordered={false}
+                    className="lp-glass-card dash-empty"
+                    bodyStyle={{ padding: isMobile ? 20 : 32 }}
+                  >
+                    <Result
+                      icon={
+                        <Image
+                          src={noDataIcon}
+                          alt="no data"
+                          preview={false}
+                          width={isMobile ? 240 : 320}
+                        />
+                      }
+                      title="No recipes found"
+                      subTitle="Your current ingredients and filters didn’t return any matches. Try using different ingredients or remove some ingredients."
+                      extra={
+                        <Space wrap>
+                          <Button
+                            type="primary"
+                            icon={<HomeOutlined />}
+                            onClick={() => navigate("/intro")}
+                            className="lp-primary"
+                          >
+                            Try Again
+                          </Button>
+                        </Space>
+                      }
+                    />
+                    <Divider />
+                    <Flex vertical gap="small">
+                      <Text strong >Selected ingredients</Text>
+                      {selectedIngredients.length > 0 ? (
+                        <Space wrap>
+                          {selectedIngredients.map((item) => (
+                            <Tag key={item} color="blue">
+                              {item}
+                            </Tag>
+                          ))}
+                        </Space>
+                      ) : (
+                        <Text type="secondary">No ingredients provided</Text>
+                      )}
+                    </Flex>
+                  </Card>
+                ) : (
+                  <div className="dash-results">
+                    <Row align="middle" justify="space-between" gutter={[12, 12]}>
+                      <Col xs={24} sm={16}>
+                        <Title level={3} className="dash-title">
+                          Filtered Recipes
+                        </Title>
+                      </Col>
+                    </Row>
 
-              <List
-                itemLayout="vertical"
-                size={isMobile ? "small" : "large"}
-                id="recipeList"
-                dataSource={pagedData}
-                renderItem={(item) => (
-                  <List.Item key={item._id || item.name} >
-                    <Card size={isMobile ? "small" : "large"} >
-                      <Row gutter={[16, 16]} align="top" justify={isMobile ? "center" : "start"}>
-                        <Col xs={24} sm={8} md={6} style={{ display: "flex", justifyContent: "center" }}>
-                          <Flex justify="center">
-                            <DishImage name={item.name} course={item.course} size={isMobile ? 110 : 160} />
-                          </Flex>
-                        </Col>
+                    <RecipeFilters
+                      form={form}
+                      data={finalData}
+                      total={filteredData.length}
+                      onReset={onResetFilters}
+                      sticky={!isMobile}
+                    />
 
-                        <Col xs={24} sm={16} md={18}>
-                          <Flex vertical gap="middle">
-                            <Flex justify="space-between" align="center" wrap>
-                              <Title level={4} style={{ marginBottom: 0 }}>
-                                {item.name}
-                              </Title>
-
-                              {(() => {
-                                const diet = (item.diet || "").toLowerCase();
-                                const isVeg = diet === "vegetarian";
-
-                                return (
-                                  <Tag color={isVeg ? "green" : "red"}>
-                                    {diet ? diet.charAt(0).toUpperCase() + diet.slice(1) : "Unknown"}
-                                  </Tag>
-                                );
-                              })()}
-                            </Flex>
-
-                            <Space wrap size="small">
-                              <Tag color="blue">{item.course || "Unknown course"}</Tag>
-                              <Tag color="purple">{item.state || "Unknown state"}</Tag>
-                              <Tag>Prep: {item.prep_time ?? "?"} min</Tag>
-                              <Tag>Cook: {item.cook_time ?? "?"} min</Tag>
-                            </Space>
-
-                            <Space wrap align="center">
-                              <Text strong>Ingredients:</Text>
-                              <Tag color="green">Available</Tag>
-                              <Tag color="volcano">Missing</Tag>
-                            </Space>
-
-                            <List
-                              size="default"
-                              dataSource={(() => {
-                                const allIngredients = String(item.ingredients || "")
-                                  .split(",")
-                                  .map((s) => s.trim())
-                                  .filter(Boolean);
-
-                                const missingSet = new Set(
-                                  (item.missing_ingredients?.missing_ingredients || [])
-                                    .map((s) => String(s).trim().toLowerCase())
-                                    .filter(Boolean)
-                                );
-
-                                return allIngredients.map((ing) => ({
-                                  name: ing,
-                                  isMissing: missingSet.has(ing.toLowerCase()),
-                                }));
-                              })()}
-                              renderItem={(ing) => {
-                                const displayName =
-                                  ing.name.length > 32 ? `${ing.name.slice(0, 29)}...` : ing.name;
-                                return (
-                                  <List.Item>
-                                    <Tag color={ing.isMissing ? "volcano" : "green"}>
-                                      <Tooltip title={ing.name}>
-                                        <Link
-                                          href={`https://www.google.com/search?q=what+is+${encodeURIComponent(
-                                            ing.name
-                                          )}`}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          {displayName}
-                                        </Link>
-                                      </Tooltip>
-                                    </Tag>
-                                  </List.Item>
-                                );
-                              }}
-                            />
-
-                            <Tooltip title="Watch on YouTube">
-                              <Button
-                                type="primary"
-                                danger
-                                icon={<YoutubeOutlined />}
-                                href={item.youtube_link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                disabled={!item.youtube_link}
-                                block={isMobile}
+                    <List
+                      itemLayout="vertical"
+                      size={isMobile ? "small" : "large"}
+                      id="recipeList"
+                      dataSource={pagedData}
+                      renderItem={(item) => (
+                        <List.Item key={item._id || item.name}>
+                          <Card
+                            size={isMobile ? "small" : "large"}
+                            bordered={false}
+                            className="lp-glass-card dash-card"
+                          >
+                            <Row gutter={[16, 16]} align="top" justify={isMobile ? "center" : "start"}>
+                              <Col
+                                xs={24}
+                                sm={8}
+                                md={6}
+                                style={{ display: "flex", justifyContent: "center" }}
                               >
-                                Watch on YouTube
-                              </Button>
-                            </Tooltip>
-                          </Flex>
-                        </Col>
-                      </Row>
-                    </Card>
-                  </List.Item>
-                )}
-              />
+                                <Flex justify="center">
+                                  <DishImage
+                                    name={item.name}
+                                    course={item.course}
+                                    size={isMobile ? 110 : 160}
+                                  />
+                                </Flex>
+                              </Col>
 
+                              <Col xs={24} sm={16} md={18}>
+                                <Flex vertical gap="middle">
+                                  <Flex justify="space-between" align="center" wrap>
+                                    <Title level={4} style={{ marginBottom: 0 }}>
+                                      {item.name}
+                                    </Title>
+
+                                    {(() => {
+                                      const diet = (item.diet || "").toLowerCase();
+                                      const isVeg = diet === "vegetarian";
+
+                                      return (
+                                        <Tag
+                                          className={`dash-tag ${
+                                            isVeg ? "dash-tag-diet-veg" : "dash-tag-diet-nonveg"
+                                          }`}
+                                        >
+                                          {diet
+                                            ? diet.charAt(0).toUpperCase() + diet.slice(1)
+                                            : "Unknown"}
+                                        </Tag>
+                                      );
+                                    })()}
+                                  </Flex>
+
+                                  <Space wrap size="small">
+                                    <Tag className="dash-tag dash-tag-course">
+                                      {item.course || "Unknown course"}
+                                    </Tag>
+                                    <Tag className="dash-tag dash-tag-state">
+                                      {item.state || "Unknown state"}
+                                    </Tag>
+                                    <Tag className="dash-tag dash-tag-time">
+                                      Prep: {item.prep_time ?? "?"} min
+                                    </Tag>
+                                    <Tag className="dash-tag dash-tag-time">
+                                      Cook: {item.cook_time ?? "?"} min
+                                    </Tag>
+                                  </Space>
+
+                                  <Space wrap align="center">
+                                    <Text strong>Ingredients:</Text>
+                                    <Tag className="dash-tag dash-tag-available">Available</Tag>
+                                    <Tag className="dash-tag dash-tag-missing">Missing</Tag>
+                                  </Space>
+
+                                  <List
+                                    size="default"
+                                    dataSource={(() => {
+                                      const allIngredients = String(item.ingredients || "")
+                                        .split(",")
+                                        .map((s) => s.trim())
+                                        .filter(Boolean);
+
+                                      const missingSet = new Set(
+                                        (item.missing_ingredients?.missing_ingredients || [])
+                                          .map((s) => String(s).trim().toLowerCase())
+                                          .filter(Boolean)
+                                      );
+
+                                      return allIngredients.map((ing) => ({
+                                        name: ing,
+                                        isMissing: missingSet.has(ing.toLowerCase()),
+                                      }));
+                                    })()}
+                                    renderItem={(ing) => {
+                                      const displayName =
+                                        ing.name.length > 32 ? `${ing.name.slice(0, 29)}...` : ing.name;
+                                      return (
+                                        <List.Item>
+                                          <Tag
+                                            className={`dash-tag ${
+                                              ing.isMissing ? "dash-tag-missing" : "dash-tag-available"
+                                            }`}
+                                          >
+                                            <Tooltip title={ing.name}>
+                                              <Link
+                                                href={`https://www.google.com/search?q=what+is+${encodeURIComponent(
+                                                  ing.name
+                                                )}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="dash-ingredient-link"
+                                              >
+                                                {displayName}
+                                              </Link>
+                                            </Tooltip>
+                                          </Tag>
+                                        </List.Item>
+                                      );
+                                    }}
+                                  />
+
+                                  <Tooltip title="Watch on YouTube">
+                                    <Button
+                                      type="primary"
+                                      icon={<YoutubeOutlined />}
+                                      href={item.youtube_link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      disabled={!item.youtube_link}
+                                      block={isMobile}
+                                      className="lp-primary"
+                                    >
+                                      Watch on YouTube
+                                    </Button>
+                                  </Tooltip>
+                                </Flex>
+                              </Col>
+                            </Row>
+                          </Card>
+                        </List.Item>
+                      )}
+                    />
+                  </div>
+                )}
+
+                {filteredData.length > 0 && (
+                  <Flex justify="center">
+                    <Pagination
+                      current={page}
+                      pageSize={pageSize}
+                      total={filteredData.length}
+                      onChange={(p) => setPage(p)}
+                      onShowSizeChange={(p, size) => {
+                        setPage(1);
+                        setPageSize(size);
+                      }}
+                      showSizeChanger
+                      pageSizeOptions={[5, 10, 20, 50]}
+                      showQuickJumper={!isMobile}
+                      responsive
+                    />
+                  </Flex>
+                )}
+
+                <CustomBackTop />
+              </Flex>
             </Col>
-          }
-          {filteredData.length > 0 && (
-            <Flex justify="center">
-              <Pagination
-                current={page}
-                pageSize={pageSize}
-                total={filteredData.length}
-                onChange={(p) => setPage(p)}
-                onShowSizeChange={(p, size) => {
-                  setPage(1);
-                  setPageSize(size);
-                }}
-                showSizeChanger
-                pageSizeOptions={[5, 10, 20, 50]}
-                showQuickJumper={!isMobile}
-                responsive
-              />
+          </Row>
+
+          {!noData && (
+            <Flex justify="center" className="dash-result-art">
+              <Image src={resultIcon} alt="recipe" preview={false} width={isMobile ? 320 : 500} />
             </Flex>
           )}
+        </div>
+      </section>
 
-          <CustomBackTop />
-
-        </Flex>
-
-      </Col>
       {!isStandalone && (
         <>
           <Button
             shape="round"
+            type="primary"
             onClick={handleInstallClick}
-            color="cyan"
-            variant="filled"
+            className="lp-primary dash-install"
             style={{
               position: "fixed",
               left: 20,
@@ -448,6 +594,7 @@ const RecipeListPage = ({ data = [] }) => {
             onOk={() => setShowInstallHelp(false)}
             okText="Got it"
             cancelText="Close"
+            rootClassName="lp-modal-root"
           >
             <Flex vertical gap="middle">
               <Text>
@@ -458,6 +605,7 @@ const RecipeListPage = ({ data = [] }) => {
               <Alert
                 type="info"
                 showIcon
+                className="dash-alert"
                 message={
                   isIOS
                     ? "iPhone/iPad: Install is manual"
@@ -512,8 +660,8 @@ const RecipeListPage = ({ data = [] }) => {
                           title: "Install",
                           description: (
                             <span>
-                              Tap <Text strong>Install app</Text> or <Text strong>Add to Home screen</Text>,
-                              then confirm.
+                              Tap <Text strong>Install app</Text> or{" "}
+                              <Text strong>Add to Home screen</Text>, then confirm.
                             </span>
                           ),
                         },
@@ -533,17 +681,7 @@ const RecipeListPage = ({ data = [] }) => {
           </Modal>
         </>
       )}
-      {
-        !noData && (
-          <Flex justify="center">
-            <Image src={resultIcon} alt="recipe" preview={false} width={isMobile ? 320 : 500} />
-          </Flex>
-        )
-      }
-
-    </Row>
-
-
+    </div>
   );
 };
 

@@ -1,0 +1,18 @@
+.custom-backtop-btn {
+  background: linear-gradient(135deg, rgba(255, 178, 92, 1) 0%, rgba(255, 124, 77, 1) 55%, rgba(255, 88, 115, 1) 100%);
+  box-shadow: 0 10px 26px rgba(255, 178, 92, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.custom-backtop-btn img {
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
+}
+
+.custom-backtop-tag.ant-tag {
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-text);
+  border-radius: 999px;
+  padding: 2px 10px;
+}

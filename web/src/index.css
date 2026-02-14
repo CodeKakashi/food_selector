@@ -1,10 +1,59 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: dark;
+  --theme-bg: #0b0f14;
+  --theme-bg-2: #111827;
+  --theme-text: rgba(255, 255, 255, 0.92);
+  --theme-muted: rgba(255, 255, 255, 0.74);
+  --theme-border: rgba(255, 255, 255, 0.12);
+  --theme-border-strong: rgba(255, 255, 255, 0.18);
+  --theme-surface: rgba(255, 255, 255, 0.06);
+  --theme-surface-2: rgba(255, 255, 255, 0.12);
+  --theme-card: rgba(255, 255, 255, 0.07);
+  --theme-card-border: rgba(255, 255, 255, 0.12);
+  --theme-header-bg: rgba(11, 15, 20, 0.62);
+  --theme-header-border: rgba(255, 255, 255, 0.12);
+  --theme-accent: #FA8C16;
+  --theme-accent-2: #7de0b6;
+  --theme-accent-3: #7ab8ff;
+  --field-bg: rgba(255, 255, 255, 0.06);
+  --field-border: rgba(255, 255, 255, 0.14);
+  --field-text: rgba(255, 255, 255, 0.92);
+  --field-placeholder: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --theme-bg: #f8fafc;
+  --theme-bg-2: #eef2f7;
+  --theme-text: #1f2937;
+  --theme-muted: #475569;
+  --theme-border: rgba(15, 23, 42, 0.12);
+  --theme-border-strong: rgba(15, 23, 42, 0.18);
+  --theme-surface: rgba(15, 23, 42, 0.04);
+  --theme-surface-2: rgba(15, 23, 42, 0.08);
+  --theme-card: rgba(255, 255, 255, 0.96);
+  --theme-card-border: rgba(15, 23, 42, 0.08);
+  --theme-header-bg: rgba(255, 255, 255, 0.8);
+  --theme-header-border: rgba(15, 23, 42, 0.08);
+  --field-bg: rgba(255, 255, 255, 0.96);
+  --field-border: rgba(15, 23, 42, 0.12);
+  --field-text: #1f2937;
+  --field-placeholder: #94a3b8;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--theme-bg);
+  color: var(--theme-text);
 }
 
 code {

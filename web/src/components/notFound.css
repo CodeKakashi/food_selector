@@ -139,4 +139,52 @@
   color: #a7a7a7;
   font-weight: 600;
 }
+
+[data-theme="dark"] .not-found-container {
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(255, 178, 92, 0.18) 0%, transparent 60%),
+    radial-gradient(1000px 700px at 90% 20%, rgba(125, 224, 182, 0.16) 0%, transparent 55%),
+    linear-gradient(160deg, #0b0f14 0%, #111827 45%, #0f172a 100%);
+}
+
+[data-theme="dark"] .not-found-container::before {
+  background: rgba(255, 178, 92, 0.35);
+}
+
+[data-theme="dark"] .not-found-container::after {
+  background: rgba(122, 184, 255, 0.35);
+}
+
+[data-theme="dark"] .not-found-card {
+  background: rgba(17, 24, 39, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .not-found-badge {
+  color: #1f160f;
+  background: linear-gradient(90deg, rgba(255, 178, 92, 0.9) 0%, rgba(255, 228, 184, 0.9) 100%);
+}
+
+[data-theme="dark"] .not-found-container h1 {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+[data-theme="dark"] .not-found-container p {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+[data-theme="dark"] .not-found-link {
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .not-found-link.secondary {
+  color: rgba(255, 210, 160, 0.95);
+  background: rgba(255, 178, 92, 0.14);
+}
+
+[data-theme="dark"] .not-found-divider {
+  color: rgba(255, 255, 255, 0.5);
+}
   

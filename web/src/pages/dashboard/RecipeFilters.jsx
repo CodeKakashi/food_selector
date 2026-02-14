@@ -43,13 +43,11 @@ const RecipeFilters = ({
 
   return (
     <div
+      className={`dash-filters lp-glass-card${sticky ? " is-sticky" : ""}`}
       style={{
         position: sticky ? "sticky" : "static",
-        top: sticky ? 0 : undefined,
+        top: sticky ? 12 : undefined,
         zIndex: sticky ? 50 : undefined,
-        background: "#fff",
-        padding: 16,
-        borderBottom: "1px solid #f0f0f0",
       }}
     >
       <Form form={form} layout="vertical" style={{ marginTop: 12 }}>
@@ -141,7 +139,9 @@ const RecipeFilters = ({
             </Text>
 
             <Space>
-              <Button onClick={onReset}>Reset Filters</Button>
+              <Button onClick={onReset} className="lp-secondary">
+                Reset Filters
+              </Button>
             </Space>
           </Flex>
         </Col>

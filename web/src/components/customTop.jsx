@@ -1,4 +1,5 @@
 import { BackTop, Image, Flex, Tag } from "antd";
+import "./customTop.css";
 import backToTopIcon from "../assets/customTop.svg";
 
 
@@ -8,6 +9,7 @@ const CustomBackTop = () => (
       vertical
       align="center"
       gap={6}
+      className="custom-backtop"
       style={{
         cursor: "pointer",
         userSelect: "none",
@@ -15,15 +17,14 @@ const CustomBackTop = () => (
     >
       {/* Circular button */}
       <div
+        className="custom-backtop-btn"
         style={{
           width: 44,
           height: 44,
           borderRadius: "50%",
-          backgroundColor: "#1677ff",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 4px 10px rgba(0,0,0,0.25)",
           overflow: "hidden",
         }}
       >
@@ -45,9 +46,7 @@ const CustomBackTop = () => (
       </div>
 
       {/* Processing tag */}
-      <Tag
-        color="blue"
-      >
+      <Tag className="custom-backtop-tag">
         Back to Up
       </Tag>
     </Flex>
@@ -55,4 +54,3 @@ const CustomBackTop = () => (
 );
 
 export default CustomBackTop;
-

@@ -5,6 +5,21 @@ import reportWebVitals from "./reportWebVitals";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes";
 
+const getInitialTheme = () => {
+  if (typeof window === "undefined") return "dark";
+  const stored = window.localStorage.getItem("theme");
+  if (stored === "light" || stored === "dark") return stored;
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+};
+
+try {
+  document.documentElement.dataset.theme = getInitialTheme();
+} catch {
+  // ignore
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
