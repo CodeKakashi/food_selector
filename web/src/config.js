@@ -1,4 +1,4 @@
-const PRODUCTION_KEY = false;
+const PRODUCTION_KEY = true;
 
 const PRODUCTION_URL = "https://stingy-elva-kuriyeedu-92a44ad8.koyeb.app/api"
 const Local_URL = "http://192.168.4.33:4000/api";
