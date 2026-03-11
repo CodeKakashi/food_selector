@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -434,7 +434,7 @@ const SurveyPage = () => {
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        // navigate("/");
+        navigate("/");
       } else if (status === 0) {
         message.error(msg || "Survey submission failed. Please try again.");
       } else {
