@@ -1,7 +1,7 @@
 import os
 
 
-PRODUCTION_KEY = True
+PRODUCTION_KEY = False
 
 USERNAME = "admin"
 PASSWORD = "123Qwerty*"

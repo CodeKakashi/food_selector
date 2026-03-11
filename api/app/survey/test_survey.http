@@ -1,0 +1,9 @@
+@hostUrl = http://192.168.4.33:4000
+
+###
+POST {{hostUrl}}/api/survey
+Content-Type: application/json
+
+{
+  
+}

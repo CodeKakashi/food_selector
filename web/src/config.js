@@ -1,7 +1,7 @@
-const PRODUCTION_KEY = true;
+const PRODUCTION_KEY = false;
 
-const PRODUCTION_URL = "https://stingy-elva-kuriyeedu-92a44ad8.koyeb.app/api/dashboard"
-const Local_URL = "http://192.168.4.28:4000/api/dashboard"
+const PRODUCTION_URL = "https://stingy-elva-kuriyeedu-92a44ad8.koyeb.app/api"
+const Local_URL = "http://192.168.4.33:4000/api";
 
 const BASE_URL = PRODUCTION_KEY ? PRODUCTION_URL : Local_URL;
 export { BASE_URL };

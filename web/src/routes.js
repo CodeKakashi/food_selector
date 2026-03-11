@@ -5,6 +5,7 @@ import NotFound from "./components/notFound";
 import IntroPage from "./pages/intro";
 import DashboardGuard from "./pages/dashboard";
 import LandingPage from "./pages/intro/intro.jsx";
+import SurveyPage from "./pages/survey";
 
 import AppLayout from "./pages/title/AppLayout.jsx";
 
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <DashboardGuard />,
+      },
+      {
+        path: "survey",
+        element: <SurveyPage />,
       },
     ],
   },

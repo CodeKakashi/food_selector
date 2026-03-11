@@ -161,7 +161,7 @@ const IntroPage = () => {
     };
 
     try {
-      const res = await axios.post(BASE_URL, payloadToSend);
+      const res = await axios.post(`${BASE_URL}/dashboard`, payloadToSend);
 
       const status = res?.data?.status;
       const msg = res?.data?.message;
